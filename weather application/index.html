@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Now</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- NAVBAR-->
+    <input type="checkbox" id="unitsToggle" />
+    <nav class="navbar">
+      <a class="logo" href="#">
+        <div class="logo-sun"><i class="fa-solid fa-sun"></i></div>
+        Weather Now
+      </a>
+
+    </nav>
+
+    <!-- MAIN-->
+    <main>
+      <h1 class="page-title">How's the sky looking today?</h1>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <div class="search-field">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search for a place..."
+            autocomplete="off" value=""
+          />
+        </div>
+        <button class="search-btn" id="searchBtn">Search</button>
+
+        <!-- Autocomplete — toggle display via JS -->
+        <div class="autocomplete" id="autocompleteBox" style="display: none">
+          <div class="autocomplete-item">
+            <i class="fa-solid fa-location-dot"></i> City Name
+          </div>
+          <div class="autocomplete-item">
+            <i class="fa-solid fa-location-dot"></i> City Name
+          </div>
+          <div class="autocomplete-item">
+            <i class="fa-solid fa-location-dot"></i> City Name
+          </div>
+          <div class="autocomplete-item">
+            <i class="fa-solid fa-location-dot"></i> City Name
+          </div>
+        </div>
+
+        <!-- Search in progress — toggle display via JS -->
+        <div class="search-progress" id="searchProgress" style="display: none">
+          <i class="fa-solid fa-circle-notch"></i> Search in progress
+        </div>
+      </div>
+
+      <!-- No Results — toggle display via JS -->
+      <div class="no-results" id="noResults" style="display: none">
+        <i class="fa-solid fa-circle-exclamation"></i> 
+        <p style="margin: 20px;" id="sthWrong">No search result found! </p>
+      </div>
+
+      <!-- ── Error State — toggle display via JS ── -->
+      <div class="error-page" id="errorState" style="display: none">
+        <i class="fa-solid fa-ban err-ico"></i>
+        <h2>Something went wrong</h2>
+        <p>
+          We couldn't connect to the server (API error). Please try again in a
+          few moments.
+        </p>
+        <button class="retry-btn" id="retryBtn">
+          <i class="fa-solid fa-rotate-right"></i> Retry
+        </button>
+      </div>
+
+      <!-- LOADING STATE — toggle display via JS-->
+      <div id="loadingState" style="display: none">
+        <div class="weather-grid">
+          <div class="weather-left">
+            <div class="hero-skeleton skeleton">
+              <div class="dot-loader">
+                <span></span><span></span><span></span>
+              </div>
+              <span>Loading...</span>
+            </div>
+            <div class="stats-row">
+              <div class="skel-stat-card">
+                <div class="skeleton skel-line w60"></div>
+                <div class="skeleton skel-line w80 h20"></div>
+              </div>
+              <div class="skel-stat-card">
+                <div class="skeleton skel-line w60"></div>
+                <div class="skeleton skel-line w80 h20"></div>
+              </div>
+              <div class="skel-stat-card">
+                <div class="skeleton skel-line w40"></div>
+                <div class="skeleton skel-line w80 h20"></div>
+              </div>
+              <div class="skel-stat-card">
+                <div class="skeleton skel-line w60"></div>
+                <div class="skeleton skel-line w80 h20"></div>
+              </div>
+            </div>
+            <div>
+              <div class="section-label">
+                <i class="fa-solid fa-calendar-days"></i> Daily forecast
+              </div>
+              <div class="daily-grid">
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+                <div class="skeleton skel-daily-card"></div>
+              </div>
+            </div>
+          </div>
+          <div class="hourly-panel">
+            <div class="hourly-header">
+              <div class="hourly-title">
+                <i class="fa-regular fa-clock"></i> Hourly forecast
+              </div>
+              <div
+                class="skeleton"
+                style="width: 82px; height: 30px; border-radius: 8px"
+              ></div>
+            </div>
+            <div class="hourly-list">
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+              <div class="skeleton skel-hourly-row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEATHER CONTENT — toggle display via JS-->
+      <div id="weatherContent">
+        <div class="weather-grid">
+          <div class="weather-left">
+            <!-- Hero Card -->
+            <div class="hero-card" id="heroCard">
+              <div class="hero-info">
+                <div class="hero-city" id="heroCity">Berlin, Germany</div>
+                <div class="hero-date" id="heroDate">Tuesday, Aug 5, 2025</div>
+              </div>
+              <div class="hero-right">
+                <img class="hero-icon" id="heroIcon" src="">
+                <div class="hero-temp" id="heroTemp">20°</div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-head">
+                  <i class="fa-solid fa-temperature-half"></i> Feels Like
+                </div>
+                <div class="stat-val" id="statFeels">18°</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-head">
+                  <i class="fa-solid fa-droplet"></i> Humidity
+                </div>
+                <div class="stat-val" id="statHumidity">46%</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-head">
+                  <i class="fa-solid fa-wind"></i> Wind
+                </div>
+                <div class="stat-val" id="statWind">14 km/h</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-head">
+                  <i class="fa-solid fa-cloud-rain"></i> Precipitation
+                </div>
+                <div class="stat-val" id="statPrecip">0 mm</div>
+              </div>
+            </div>
+
+            <!-- Daily Forecast -->
+            <div>
+              <div class="section-label">
+                <i class="fa-solid fa-calendar-days"></i> Daily forecast
+              </div>
+              <div class="daily-grid" id="dailyGrid">
+                <div class="daily-card">
+                  <div class="daily-day">Tue</div>
+                  <img class="daily-icon" src="icons/rainy.png" alt="Rainy" />
+                  <div class="daily-temps">
+                    <span class="d-hi">20°</span><span class="d-lo">14°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Wed</div>
+                  <img class="daily-icon" src="icons/rainy.png" alt="Rainy" />
+                  <div class="daily-temps">
+                    <span class="d-hi">21°</span><span class="d-lo">15°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Thu</div>
+                  <img class="daily-icon" src="icons/sunny.png" alt="Sunny" />
+                  <div class="daily-temps">
+                    <span class="d-hi">24°</span><span class="d-lo">14°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Fri</div>
+                  <img class="daily-icon" src="icons/partly-cloudy.png" alt="Partly Cloudy" />
+                  <div class="daily-temps">
+                    <span class="d-hi">25°</span><span class="d-lo">13°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Sat</div>
+                  <img class="daily-icon" src="icons/stormy.png" alt="Stormy" />
+                  <div class="daily-temps">
+                    <span class="d-hi">21°</span><span class="d-lo">15°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Sun</div>
+                  <img class="daily-icon" src="icons/snowy.png" alt="Snowy" />
+                  <div class="daily-temps">
+                    <span class="d-hi">25°</span><span class="d-lo">16°</span>
+                  </div>
+                </div>
+                <div class="daily-card">
+                  <div class="daily-day">Mon</div>
+                  <img class="daily-icon" src="icons/foggy.png" alt="Foggy">
+                  <div class="daily-temps">
+                    <span class="d-hi">24°</span><span class="d-lo">15°</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /weather-left -->
+
+          <!-- Hourly Sidebar -->
+          <div class="hourly-panel">
+            <div class="hourly-header">
+              <div class="hourly-title">
+                <i class="fa-regular fa-clock"></i> Hourly forecast
+              </div>
+              <select class="day-select" id="daySelect">
+                <option>Monday</option>
+                <option selected>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+              </select>
+            </div>
+            <div class="hourly-list" id="hourlyList">
+              <div class="hourly-row">
+                <image class="h-icon" src="icons/sunny.png" alt="Sunny"><span class="h-time">3 PM</span>
+                <span class="h-temp">20°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/sunny.png" alt="Sunny">
+                <span class="h-time">4 PM</span>
+                <span class="h-temp">20°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/sunny.png" alt="Sunny">
+                <span class="h-time">5 PM</span>
+                <span class="h-temp">20°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/sunny.png" alt="Sunny">
+                <span class="h-time">6 PM</span>
+                <span class="h-temp">19°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/cloudy.png" alt="Cloudy">
+                <span class="h-time">7 PM</span>
+                <span class="h-temp">18°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/foggy.png" alt="Foggy">
+                <span class="h-time">8 PM</span>
+                <span class="h-temp">18°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/cloudy.png" alt="Cloudy">
+                <span class="h-time">9 PM</span>
+                <span class="h-temp">17°</span>
+              </div>
+              <div class="hourly-row">
+                <img class="h-icon" src="icons/cloudy.png" alt="Cloudy">
+                <span class="h-time">10 PM</span>
+                <span class="h-temp">17°</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /weatherContent -->
+    </main>
+  </body>
+</html>
