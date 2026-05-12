@@ -8,7 +8,6 @@ your current location automatically and displays real-time weather data.
 - 🌍 Search weather for any city worldwide
 - 📅 7-day weather forecast
 - ⏱️ Hourly temperature breakdown
-- 🌡️ Metric and Imperial unit toggle
 - 🔍 City autocomplete suggestions
 
 ## APIs Used
